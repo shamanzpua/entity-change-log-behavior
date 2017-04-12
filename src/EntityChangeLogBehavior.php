@@ -5,6 +5,8 @@ use yii\db\ActiveRecord;
 use yii\db\ActiveRecordInterface;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
+use yii\helpers\StringHelper;
+use yii\helpers\Inflector;
 use Yii;
 
 /**
@@ -65,6 +67,7 @@ class EntityChangeLogBehavior extends \yii\base\Behavior
     const LOG_TABLE_NEW_VALUE = 'new_value';
     const LOG_TABLE_OLD_VALUE = 'old_value';
     const LOG_TABLE_ACTION = 'action';
+    const LOG_TABLE_ENTITY_NAME = 'entity';
     
     /**
      * @var ActiveRecordInterface old owner state
@@ -115,10 +118,11 @@ class EntityChangeLogBehavior extends \yii\base\Behavior
         self::LOG_TABLE_ACTION => 'action',
         self::LOG_TABLE_NEW_VALUE => 'new_value',
         self::LOG_TABLE_OLD_VALUE => 'old_value',
+        self::LOG_TABLE_ENTITY_NAME => null,
     ];
 
     /**
-     * @return array
+     * @return array 
      */
     public function getLogTableColumns()
     {
@@ -162,7 +166,7 @@ class EntityChangeLogBehavior extends \yii\base\Behavior
         
         $columns = $this->getLogTableColumns();
         array_walk($columns, function ($column, $param) {
-            if (!$this->logModel->hasAttribute($column)) {
+            if (!$this->logModel->hasAttribute($column) && $column != null) {
                 throw new \yii\base\InvalidConfigException($this->logModel->className() . " doesn't have field '$column'");
             }
         });
@@ -185,6 +189,15 @@ class EntityChangeLogBehavior extends \yii\base\Behavior
     }
 
     /**
+     * Get owner entity name
+     * @return string
+     */
+    public function getLogEntityName()
+    {
+        return Inflector::titleize(StringHelper::basename($this->owner->className()));
+    }
+    
+    /**
      * save data for log
      * @param string $action 
      */
@@ -199,8 +212,9 @@ class EntityChangeLogBehavior extends \yii\base\Behavior
             $logTableFields[self::LOG_TABLE_OLD_VALUE] => Json::encode($oldData),
             $logTableFields[self::LOG_TABLE_NEW_VALUE] => Json::encode($newData),
             $logTableFields[self::LOG_TABLE_ACTION] => $action,
+            $logTableFields[self::LOG_TABLE_ENTITY_NAME] => $this->getLogEntityName(),
         ];
-
+        
         array_walk($this->additionalLogTableFields, function ($modelAttribute, $logTableField) use (&$attributes) {
             $attributes[$logTableField] = $this->owner->$modelAttribute;
         });
