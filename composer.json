@@ -1,7 +1,8 @@
 {
     "name": "shaman/entity-change-log-behavior",
     "description": "Yii2 Behavior. Logger for entity changes",
-	"keywords": ["php", "behavior", "yii2", "change"],
+    "keywords": ["php", "behavior", "yii2", "change"],
+    "minimum-stability": "stable",
     "type": "library",
     "require": {
         "yiisoft/yii2": "*"
