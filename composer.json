@@ -1,0 +1,20 @@
+{
+    "name": "shaman/entity-change-log-behavior",
+    "description": "Yii2 Behavior. Logger for entity changes",
+	"keywords": ["php", "behavior", "yii2", "change"],
+    "type": "library",
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "shamanzpua\\behaviors\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "shamanzp",
+            "email": "yura224k@gmail.com"
+        }
+    ]
+}
